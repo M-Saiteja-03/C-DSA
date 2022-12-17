@@ -1,0 +1,3 @@
+to run cpp file in the terminal first go to file location and do:
+->g++ filename.cpp -0 run
+->run

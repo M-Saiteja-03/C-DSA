@@ -1,0 +1,32 @@
+To find the kth largest or smallest element in an array,bruteforce approach is to sort the array
+and return the corresponding index of the array.
+
+Bruteforce - TC-O(NlogN)
+
+best approach to use max/min heap as follows:- 
+
+// for finding "kth smallest" element we use "max heap".
+      /*  priority_queue<int> pq;
+        for(int i=0;i<k;i++){
+            pq.push(nums[i]);                                                //TC - O(n)
+        }
+        for(int i=k;i<nums.size();i++){
+            if(nums[i]<pq.top()){
+                pq.pop();
+                pq.push(nums[i]);
+            }
+        }
+        return pq.top();*/
+
+//for finding "kth largest" element we use "min heap".
+       /* priority_queue<int, vector<int>, greater<int> > pq;
+        for(int i=0;i<k;i++){
+            pq.push(nums[i]);
+        }                                
+        for(int i=k;i<nums.size();i++){                                      //TC - O(n)
+            if(nums[i]>pq.top()){
+                pq.pop();
+                pq.push(nums[i]);
+            }
+        }
+        return pq.top(); */
