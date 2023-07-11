@@ -1,0 +1,48 @@
+Given two strings s and t, return the number of distinct 
+subsequences
+ of s which equals t.
+
+The test cases are generated so that the answer fits on a 32-bit signed integer.
+Input: s = "rabbbit", t = "rabbit"
+Output: 3
+Explanation:
+As shown below, there are 3 ways you can generate "rabbit" from s.
+rabbbit
+rabbbit
+rabbbit
+
+Input: s = "babgbag", t = "bag"
+Output: 5
+Explanation:
+As shown below, there are 5 ways you can generate "bag" from s.
+babgbag
+babgbag
+babgbag
+babgbag
+babgbag
+
+// Bruteforce
+generate all subsequences and count them
+
+// recursion + memoisation
+
+class Solution {
+public:
+    int f(int i,int j,string &s,string &t,vector<vector<int>> &dp){
+        if(j<0) return 1;
+        if(i<0) return 0;
+        if(dp[i][j]!=-1) return dp[i][j];
+        if(s[i]==t[j]){
+            // if both char match I can search for s2[0...j-1] in s1[0..i-1] or I can ignore the curr s1 
+            //char and search for another char that will match with s2[0....j] in s1[0....i-1]
+            return dp[i][j]=f(i-1,j-1,s,t,dp)+f(i-1,j,s,t,dp);
+        }
+        return dp[i][j]=f(i-1,j,s,t,dp);
+    }
+    int numDistinct(string s, string t) {
+        int n=s.size();
+        int m=t.size();
+        vector<vector<int>> dp(n,vector<int>(m,-1));
+        return f(n-1,m-1,s,t,dp);
+    }
+};

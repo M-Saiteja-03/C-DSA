@@ -1,0 +1,45 @@
+Given a string s. In one step you can insert any character at any index of the string.
+
+Return the minimum number of steps to make s palindrome.
+
+A Palindrome String is one that reads the same backward as well as forward.
+
+Input: s = "zzazz"
+Output: 0
+Explanation: The string "zzazz" is already palindrome we do not need any insertions.
+
+Input: s = "leetcode"
+Output: 5
+Explanation: Inserting 5 characters the string becomes "leetcodocteel".
+
+//pre-req--->1 & 3
+//solution
+maximum no.of insertions required is we can insert whole string again in reverse order to make it a palindrome.
+
+To do it in min steps, we need to find the longest palindromic subseq in given string and subtract the obtained
+length from whole string to get min no.of insertions.
+
+//code
+
+class Solution {
+public:
+    int minInsertions(string s) {
+        string s1=s;
+        reverse(s1.begin(),s1.end());
+        int n=s.size();
+        vector<vector<int>> dp(n+1,vector<int>(n+1,0));
+        int plen=0;
+        for(int i=1;i<=n;i++){
+            for(int j=1;j<=n;j++){
+                if(s[i-1]==s1[j-1]){
+                    dp[i][j]=1+dp[i-1][j-1];
+                }
+                else{
+                    dp[i][j]=max(dp[i-1][j],dp[i][j-1]);
+                }
+            }
+        }
+        plen=dp[n][n];
+        return n-plen;
+    }
+};

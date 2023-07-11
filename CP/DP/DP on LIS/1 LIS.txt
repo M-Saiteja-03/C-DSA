@@ -1,0 +1,118 @@
+Longest Increasing Subsequence
+
+Given an integer array nums, return the length of the longest strictly increasing 
+subsequence
+.
+
+Input: nums = [10,9,2,5,3,7,101,18]
+Output: 4
+Explanation: The longest increasing subsequence is [2,3,7,101], therefore the length is 4.
+
+Input: nums = [0,1,0,3,2,3]
+Output: 4
+
+//Bruteforce-> generate all subseq and check for longest
+
+//recursion + memoization
+
+class Solution {
+public:
+    int len(vector<int>& nums,int i,int p,vector<vector<int>> &dp){
+        if(i==nums.size()) return 0;
+        if(dp[i][p+1]!=-1) return dp[i][p+1];
+        int npick=0+len(nums,i+1,p,dp);
+        int pick=0;
+        if(p==-1 or nums[i]>nums[p]){
+            pick=1+len(nums,i+1,i,dp);
+        }
+        return dp[i][p+1]=max(pick,npick);
+    }
+    int lengthOfLIS(vector<int>& nums) {
+        int n=nums.size();
+        vector<vector<int>> dp(n,vector<int>(n+1,-1));
+        return len(nums,0,-1,dp);
+    }
+};
+{N^2,N^2}
+------------------------------------------------
+//iterative Solution
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int n=nums.size();
+        vector<int> dp(n,-1);
+        dp[0]=1;
+        for(int i=1;i<n;i++){
+            int maxi=0;
+            for(int j=0;j<i;j++){
+                if(nums[j]<nums[i]){
+                    maxi=max(maxi,dp[j]);
+                }
+            }
+            dp[i]=maxi+1;
+        }
+        return *max_element(dp.begin(),dp.end());
+    }
+};
+{N^2, N}
+-------------------------------------------------
+// printing LIS by creating sepearte index array which stores previous element's index from which it came 
+for a particular index i, then we start iterating from the index which has max value in dp arrary and back track
+
+//code
+
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int n=nums.size();
+        vector<int> dp(n,1);
+        vector<int> res,hash(n);
+        int hidx=0;
+        int maxi=0;
+        dp[0]=1;
+        for(int i=0;i<n;i++){
+            hash[i]=i;
+            for(int j=0;j<i;j++){
+                if(nums[j]<nums[i] && 1+dp[j]>dp[i]){
+                    dp[i]=1+dp[j];
+                    hash[i]=j;
+                }
+            }
+            if(dp[i]>maxi){
+                maxi=dp[i];
+                hidx=i;
+            }
+        }
+        while(hash[hidx]!=hidx){
+            res.push_back(nums[hidx]);
+            hidx=hash[hidx];
+        }
+        res.push_back(nums[hidx]);
+        reverse(res.begin(),res.end());
+        for(int x : res)
+            cout<<x<<" ";
+        
+        return maxi;
+    }
+};
+-------------------------------------------------------------
+//Using Binary Search
+
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int n=nums.size();
+        vector<int> temp;
+        temp.push_back(nums[0]);
+        for(int i=1;i<n;i++){
+            if(nums[i]>temp.back()){
+                temp.push_back(nums[i]);
+            }
+            else{
+                int idx=lower_bound(temp.begin(),temp.end(),nums[i])-temp.begin();
+                temp[idx]=nums[i];
+            }
+        }
+        return temp.size();
+    }
+};
