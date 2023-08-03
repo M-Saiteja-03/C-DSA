@@ -1,0 +1,156 @@
+/*Given a positive integer n, find the smallest integer which has exactly the same digits existing in the 
+integer n and is greater in value than n. If no such positive integer exists, return -1.
+
+Note that the returned integer should fit in 32-bit integer, if there is a valid answer but it does not fit 
+in 32-bit integer, return -1.
+
+Example 1:
+
+Input: n = 12
+Output: 21
+
+Example 2:
+
+Input: n = 21
+Output: -1
+
+Constraints:
+
+1 <= n <= 231 - 1
+
+Brute Force:{N^2,N}
+
+start checking from the last digit as it has less weightage and given min numner.*/
+
+class Solution {
+public:
+    int nextGreaterElement(int n) {
+        string s =to_string(n);
+        string ch =to_string(n);
+        int size=s.size();
+        for(int i=size-2;i>=0;i--){
+            priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;
+            pq.push({10,10});
+            for(int j=i+1;j<size;j++){
+                cout<<s[j]<<" ";
+                if(s[j]>s[i]){
+                    pq.push({s[j]-'0',j});
+                }
+            }
+            cout<<endl;
+            auto top=pq.top();
+            cout<<"top"<<" "<<top.first<<endl;
+            if(top.first>(s[i]-'0') && top.first!=10){
+                cout<<"in"<<endl;
+                swap(s[i],s[top.second]);
+                sort(s.begin()+i+1,s.end());
+                break;
+            }
+        }
+        if(s==ch) return -1;
+        if(stol(s)>INT_MAX) return -1;
+        return stoi(s);
+    }
+};
+----------------------------------------------------------------------------------------------
+Better:- {NlogN,1}
+
+1.Traverse the given number from rightmost digit, keep traversing till you find a digit which is smaller than 
+  the previously traversed digit. For example, if the input number is “534976”, we stop at 4 because 4 is 
+  smaller than next digit 9. If we do not find such a digit, then output is “Not Possible”.
+2.Now search the right side of above found digit ‘d’ for the smallest digit greater than ‘d’. 
+  For “534976″, the right side of 4 contains “976”. The smallest digit greater than 4 is 6.
+3.Swap the above found two digits, we get 536974 in above example.
+4.Now sort all digits from position next to ‘d’ to the end of number. The number that we get after sorting is the output. 
+  For above example, we sort digits in bold 536974. We get “536479” which is the next greater number for input 534976.
+
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+  
+// Utility function to swap two digits
+void swap(char *a, char *b)
+{
+    char temp = *a;
+    *a = *b;
+    *b = temp;
+}
+  
+// Given a number as a char array number[], this function finds the
+// next greater number.  It modifies the same array to store the result
+void findNext(char number[], int n)
+{
+    int i, j;
+  
+    // I Start from the right most digit and find the first digit that is
+    // smaller than the digit next to it.
+    for (i = n-1; i > 0; i--)
+        if (number[i] > number[i-1])
+           break;
+  
+    // If no such digit is found, then all digits are in descending order
+    // means there cannot be a greater number with same set of digits
+    if (i==0)
+    {
+        cout << "Next number is not possible";
+        return;
+    }
+  
+    // II Find the smallest digit on right side of (i-1)'th digit that is
+    // greater than number[i-1]
+    int x = number[i-1], smallest = i;
+    for (j = i+1; j < n; j++)
+        if (number[j] > x && number[j] < number[smallest])
+            smallest = j;
+  
+    // III Swap the above found smallest digit with number[i-1]
+    swap(&number[smallest], &number[i-1]);
+  
+    // IV Sort the digits after (i-1) in ascending order
+    sort(number + i, number + n);
+  
+    cout << "Next number with same set of digits is " << number;
+  
+    return;
+}
+  
+// Driver program to test above function
+int main()
+{
+    char digits[] = "534976";
+    int n = strlen(digits);
+    findNext(digits, n);
+    return 0;
+}
+---------------------------------------------------------------------------------------------
+Optimal:-{N,1}
+
+Here instead of sorting the digits after (i-1) index, we are reversing the digits as mentioned in the 
+above optimisation point.
+As they will be in decreasing order so to find the smallest element possible from the right part 
+we just reverse them thus reducing time complexity.
+
+class Solution {
+public:
+    int nextGreaterElement(int n) {
+        string s =to_string(n);
+        string ch =to_string(n);
+        int size=s.size();
+        int i;
+        for(i=size-1;i>0;i--){
+            if(s[i]>s[i-1]) break;
+        }
+        if(i==0) return -1;
+        for(int j=size-1;j>=i;j--){
+            if(s[j]>s[i-1]){
+                swap(s[i-1],s[j]);
+                break;
+            }
+        }
+        reverse(s.begin()+i,s.end());
+        if(stol(s)>INT_MAX) return -1;
+        return stoi(s);
+    }
+};
+-----------------------------------------------------------------------------------------------------

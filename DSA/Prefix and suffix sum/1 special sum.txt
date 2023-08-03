@@ -1,0 +1,34 @@
+Given an array of sixe n.
+first sum-- sum of first i elements of array
+last sum-- sum of last i elements of array
+spl sum-- first sum + last sum.
+
+find min spl sum.
+
+Sample Input 1:
+2
+4
+1 2 3 4
+4
+1 -2 -3 4
+
+Sample Output 1:
+5
+-5
+
+//code
+
+#include <bits/stdc++.h> 
+int specialSum(vector<int> &arr, int n)
+{
+	// Write your code here. 
+	vector<int> res;
+	int psum=0,sufsum=0;
+	for(int i=0;i<n;i++){
+		psum+=arr[i];
+		sufsum+=arr[n-1-i];
+		res.push_back(psum+sufsum);
+	}
+	sort(res.begin(),res.end());
+	return res[0];
+}

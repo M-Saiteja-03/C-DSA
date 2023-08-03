@@ -1,0 +1,79 @@
+Given the root of a binary tree, the value of a target node target, and an integer k, 
+return an array of the values of all nodes that have a distance k from the target node.
+
+You can return the answer in any order.
+
+Input: root = [3,5,1,6,2,0,8,null,null,7,4], target = 5, k = 2
+Output: [7,4,1]
+Explanation: The nodes that are a distance 2 from the target node (with value 5) have values 7, 4, and 1.
+
+Input: root = [1], target = 1, k = 3
+Output: []
+
+
+// here going back to parent is big task.
+so we create a hashmap to move up.
+ToDo: should try with adjacency list once.
+
+class Solution {
+public:
+    void findParent(unordered_map<TreeNode*,TreeNode*> &parents,TreeNode* root){
+        queue<TreeNode*> q;
+        q.push(root);
+        while(!q.empty()){
+            int size=q.size();
+            for(int i=0;i<size;i++){
+                TreeNode* front=q.front();
+                q.pop();
+                if(front->left){
+                    q.push(front->left);
+                    parents[front->left]=front;
+                }
+                if(front->right){
+                    q.push(front->right);
+                    parents[front->right]=front;
+                }
+            }
+        }
+    }
+    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
+        unordered_map<TreeNode*,TreeNode*> parents;
+        findParent(parents,root);
+        TreeNode* cur=target;
+        queue<TreeNode*> q;
+        unordered_map<TreeNode*,bool> vis;
+        vector<int> res;
+        if(k==0){
+            res.push_back(target->val);
+            return res;
+        }
+        q.push(cur);
+        vis[cur]=true;
+        int distance=1;
+        while(!q.empty()){
+            int size=q.size();
+            if(distance>k) break;
+            for(int i=0;i<size;i++){
+                TreeNode*front=q.front();
+                q.pop();
+                if(front->left && vis[front->left]==false){
+                    q.push(front->left);
+                    if(distance==k) res.push_back(front->left->val);
+                    vis[front->left]=true;
+                }
+                if(front->right && !vis[front->right]){
+                    q.push(front->right);
+                    if(distance==k) res.push_back(front->right->val);
+                    vis[front->right]=true;
+                }
+                if(parents[front] && !vis[parents[front]]){
+                    q.push(parents[front]);
+                    if(distance==k) res.push_back(parents[front]->val);
+                    vis[parents[front]]=true;
+                }
+            }
+            distance++;
+        }
+        return res;
+    }
+};

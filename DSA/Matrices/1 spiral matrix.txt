@@ -1,0 +1,39 @@
+
+Input: matrix = [[1,2,3],[4,5,6],[7,8,9]]
+Output: [1,2,3,6,9,8,7,4,5]
+
+#include <bits/stdc++.h> 
+vector<int> spiralPathMatrix(vector<vector<int>> matrix, int n, int m) 
+{
+    // Write your code here.
+    int firstrow=0;
+    int firstcol=0;
+    int lastrow=n-1;
+    int lastcol=m-1;
+    int count=0;
+    int total=n*m;
+    vector<int> res;
+    while(count<total){
+        for(int i=firstcol;count<total && i<=lastcol;i++){
+            res.push_back(matrix[firstrow][i]);
+            count++;
+        }
+        firstrow++;
+        for(int i=firstrow;count<total && i<=lastrow;i++){
+            res.push_back(matrix[i][lastcol]);
+            count++;
+        }
+        lastcol--;
+        for(int i=lastcol;count<total && i>=firstcol;i--){
+            res.push_back(matrix[lastrow][i]);
+            count++;
+        }
+        lastrow--;
+        for(int i=lastrow;count<total && i>=firstrow;i--){
+            res.push_back(matrix[i][firstcol]);
+            count++;
+        }
+        firstcol++;
+    }
+    return res;
+}
