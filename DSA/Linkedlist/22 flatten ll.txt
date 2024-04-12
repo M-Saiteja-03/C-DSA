@@ -1,0 +1,122 @@
+(gfg) 
+Given a Linked List of size N, where every node represents a sub-linked-list and contains two pointers:
+(i) a next pointer to the next node,
+(ii) a bottom pointer to a linked list where this node is head.
+Each of the sub-linked-list is in sorted order.
+Flatten the Link List such that all the nodes appear in a single level while maintaining the sorted order. 
+
+Note: The flattened list will be printed using the bottom pointer instead of the next pointer.
+For more clarity have a look at the printList() function in the driver code.
+
+Input:
+5 -> 10 -> 19 -> 28
+|     |     |     | 
+7     20    22   35
+|           |     | 
+8          50    40
+|                 | 
+30               45
+Output:  5-> 7-> 8- > 10 -> 19-> 20->
+22-> 28-> 30-> 35-> 40-> 45-> 50.
+Explanation:
+The resultant linked lists has every 
+node in a single level.
+(Note: | represents the bottom pointer.)
+
+Input:
+5 -> 10 -> 19 -> 28
+|          |                
+7          22   
+|          |                 
+8          50 
+|                           
+30              
+Output: 5->7->8->10->19->22->28->30->50
+Explanation:
+The resultant linked lists has every
+node in a single level.
+
+(Note: | represents the bottom pointer.)
+
+Your Task:
+You do not need to read input or print anything. Complete the function flatten() that takes the head of the 
+linked list as input parameter and returns the head of flattened link list.
+
+Expected Time Complexity: O(N*N*M)
+Expected Auxiliary Space: O(N)
+
+Constraints:
+0 <= N <= 50
+1 <= Mi <= 20
+1 <= Element of linked list <= 103
+---------------------------------------------------------------------------------------------
+#1 using merge two sorted list concept{N*N*M, N*M}
+Explanation: As we are merging 2 lists at a time,
+
+After adding the first 2 lists, the time taken will be O(M+M) = O(2M).
+Then we will merge another list to above merged list -> time = O(2M + M) = O(3M).
+Then we will merge another list -> time = O(3M + M).
+We will keep merging lists to previously merged lists until all lists are merged.
+Total time taken will be O(2M + 3M + 4M + .... N*M) = (2 + 3 + 4 + ... + N) * M
+Using arithmetic sum formula: time = O((N * N + N - 2) * M/2)
+The above expression is roughly equal to O(N * N * M) for a large value of N
+
+Node* merge(Node* h1,Node*h2){
+    Node* h=new Node(-1);
+    Node* t=h;
+    while(h1!=NULL && h2!=NULL){
+        if(h1->data < h2->data){
+            t->bottom=h1;
+            h1=h1->bottom;
+        }
+        else{
+            t->bottom=h2;
+            h2=h2->bottom;
+        }
+        t=t->bottom;
+    }
+    if(h1!=NULL) t->bottom=h1;
+    else t->bottom=h2;
+    return h->bottom;
+}
+
+Node *flatten(Node *root)
+{
+   if(root==NULL or root->next==NULL){
+       return root;
+   }
+   root->next=flatten(root->next);
+   root=merge(root,root->next);
+   return root;
+}
+------------------------------------------------------------------------------------------------------------------
+#2 using priority queue {M*(N*logN), N}
+
+class comp{
+    public:
+    bool operator()(Node *a, Node*b){
+        return a->data>b->data;    
+    }
+};
+
+Node *flatten(Node *root)
+{
+   priority_queue<Node*,vector<Node*>,comp> pq;
+   Node* h=new Node(-1);
+   Node* t=h;
+   while(root!=NULL){
+       pq.push(root);
+       root=root->next;
+   }
+   while(!pq.empty()){
+       Node* node=pq.top();
+       pq.pop();
+       t->bottom=node;
+       t=t->bottom;
+       if(node->bottom){
+           pq.push(node->bottom);
+       }
+   }
+   return h->bottom;
+}
+----------------------------------------------------------------------------------------------------------

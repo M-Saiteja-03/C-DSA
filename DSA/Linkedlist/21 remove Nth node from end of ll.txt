@@ -1,0 +1,58 @@
+Remove Nth Node From End of List
+
+Given the head of a linked list, remove the nth node from the end of the list and return its head.
+
+ Example 1:
+
+
+Input: head = [1,2,3,4,5], n = 2
+Output: [1,2,3,5]
+Example 2:
+
+Input: head = [1], n = 1
+Output: []
+Example 3:
+
+Input: head = [1,2], n = 1
+Output: [1]
+ 
+
+Constraints:
+
+The number of nodes in the list is sz.
+1 <= sz <= 30
+0 <= Node.val <= 100
+1 <= n <= sz
+ 
+
+Follow up: Could you do this in one pass?
+------------------------------------------------
+#1 {N+N , 1}
+
+cal length and tarverse again till length-n times and remove link.
+
+--------------------------------------------------------------------------------------
+#2 {N ,1}
+
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* h=head;
+        ListNode*p =head;
+        int c=0;
+        while(h!=NULL){
+            if(c>=n+1){
+                p=p->next;
+            }
+            c++;
+            h=h->next;
+        }
+        if(n==c) return head->next;
+        ListNode* delnode=p->next;
+        if (delnode==NULL or n==c) return head->next;
+        p->next=delnode->next;
+        return head;
+    }
+};
+-----------------------------------------------------------------------------------------------
+

@@ -1,0 +1,96 @@
+Given a string s, return the longest 
+palindromic substring in s.
+
+Example 1:
+
+Input: s = "babad"
+Output: "bab"
+Explanation: "aba" is also a valid answer.
+Example 2:
+
+Input: s = "cbbd"
+Output: "bb"
+ 
+Constraints:
+
+1 <= s.length <= 1000
+s consist of only digits and English letters.
+--------------------------------------------------------------------------------------------------------------------------
+#1 Bruteforce(N^3 ,1) finding all substrings and checking each substr for palindrome.
+--------------------------------------------------------------------------------------------------------------------------
+#2 DP (N^2,N^2):
+
+Video link:- https://www.youtube.com/watch?v=fxwvVnBMN6I
+
+Code:
+
+class Solution {
+public:
+    string longestPalindrome(string s) {
+        string ans="";
+        int n=s.size();
+        int maxlen=0;
+        vector<vector<int>> dp(n,vector<int>(n,0));
+        //traversing diagonally
+        for(int diff=0;diff<n;diff++){
+            for(int i=0,j=diff;j<n;i++,j++){
+                //first we should handle cases of size 1 and 2 in dp array(base cases)
+                //first case(size 1)
+                if(i==j){
+                    dp[i][j]=1;
+                }
+                //second case (size 2)
+                else if(s[i]==s[j] && diff==1){
+                    dp[i][j]=2;
+                }
+                else if(s[i]==s[j] && dp[i+1][j-1]!=0){
+                    dp[i][j]=dp[i+1][j-1]+2;
+                }
+                if(dp[i][j]!=0 and (j-i+1)>maxlen){
+                    maxlen=j-i+1;
+                    ans=s.substr(i,maxlen);
+                }
+            }
+        }
+        return ans;
+    }
+};
+-------------------------------------------------------------------------------------------------------------------
+#3 {N^2, 1}
+
+Video link: https://www.youtube.com/watch?v=XYQecbcd6_c&t=351s 
+By considering each letter in the string as center and checking for odd and even length palindromic subsrings 
+possible with that center and updating the ans.
+
+Here we xplore all substrings so TC is (N^2)
+
+Code:
+
+class Solution {
+public:
+    string ans = "";
+    int maxlen=0;
+    void solve(string &s , int i ,int j)
+    {
+        int n=s.size();
+        while(i >= 0 &&  j < n && s[i]==s[j])
+        {
+            i--,j++;
+        }
+        cout<<i<<" "<<j<<endl;
+        if(j-i-1 > maxlen){
+            maxlen=j-i-1;
+            ans = s.substr(i+1 , maxlen);
+        }
+    }
+    string longestPalindrome(string s) {
+        for(int i = 0 ; i < s.size() ; i++)
+        {
+            solve(s , i , i);
+            solve(s , i , i+1);
+        }
+        return ans;
+    }
+};
+-------------------------------------------------------------------------------------------------------------
+#4 Manachers Algo{N,1} (TO-DO)

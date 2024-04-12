@@ -1,0 +1,73 @@
+You are given an array of k linked-lists lists, each linked-list is sorted in ascending order.
+
+Merge all the linked-lists into one sorted linked-list and return it.
+
+Example 1:
+
+Input: lists = [[1,4,5],[1,3,4],[2,6]]
+Output: [1,1,2,3,4,4,5,6]
+Explanation: The linked-lists are:
+[
+  1->4->5,
+  1->3->4,
+  2->6
+]
+merging them into one sorted list:
+1->1->2->3->4->4->5->6
+Example 2:
+
+Input: lists = []
+Output: []
+Example 3:
+
+Input: lists = [[]]
+Output: []
+ 
+
+Constraints:
+
+k == lists.length
+0 <= k <= 104
+0 <= lists[i].length <= 500
+-104 <= lists[i][j] <= 104
+lists[i] is sorted in ascending order.
+The sum of lists[i].length will not exceed 104.
+
+#1 {N*klog(N*k),N*k}
+add all elemnts into one list and sort them.
+---------------------------------------------------------------------------
+#2 {n*k^2,1}
+merge 2 lists at a time using two pointer technique {2n+(2n+n)+(3n+n).....+(kn+n)}
+                                                  ->{n+2n+3n+.....kn}
+                                                  -> n*k^2
+------------------------------------------------------------------------------
+#3 usig heap {N*klog(N*k),k}
+
+class cmp{
+    public:
+        bool operator()(ListNode* p1,ListNode* p2){
+            return p1->val > p2->val;
+        }
+} ;
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        priority_queue<ListNode*,vector<ListNode*>,cmp> pq;
+        ListNode* dummy=new ListNode(-1);
+        ListNode* tail=dummy;
+        for(int i=0;i<lists.size();i++){
+            if(lists[i]!=NULL){
+                pq.push(lists[i]);
+            }
+        }
+        while(!pq.empty()){
+            ListNode* top=pq.top();
+            pq.pop();
+            if(top->next!=NULL) pq.push(top->next);
+            tail->next=top;
+            tail=tail->next;
+        }
+        return dummy->next;
+    }
+};
+---------------------------------------------------------------------------------------

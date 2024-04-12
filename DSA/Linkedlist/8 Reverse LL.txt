@@ -1,0 +1,41 @@
+#1 Recursive {N,N}
+ 
+class Solution {
+public:
+    ListNode* reverse(ListNode*head){
+        if(head->next==NULL){
+            return head;
+        }
+        ListNode*newhead=reverse(head->next);
+        head->next->next=head;
+        head->next=NULL;
+        return newhead;
+
+    }   
+    ListNode* reverseList(ListNode* head) {
+        if(head==NULL){
+            return head;
+        }
+        head=reverse(head);
+        return head;
+    }
+};
+----------------------------------------------------------------------------------------------
+#2 iterative {N,1}
+
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode*prev=NULL;
+        ListNode*curr=head;
+        ListNode*forward;
+        while(curr!=NULL){
+            forward=curr->next;
+            curr->next=prev;
+            prev=curr;
+            curr=forward;
+        }
+        return prev;
+    }
+};
+------------------------------------------------------------------------------------------------

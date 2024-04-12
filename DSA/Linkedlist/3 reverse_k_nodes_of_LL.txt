@@ -1,0 +1,140 @@
+//Coding Ninjas version{ N, N };
+
+#include<iostream>
+using namespace std;
+class node{
+    public:
+    int data;
+    node*next;
+
+    node(int val){
+        data=val;
+        next=NULL;
+    }
+};
+
+void insertAtEnd(node * &head,int val){
+    node * n=new node(val);
+    if(head==NULL){
+        head=n;
+        return;
+    }
+    node*ptr=head;
+    while(ptr->next!=NULL){
+        ptr=ptr->next;
+    }
+    ptr->next=n;
+}
+void display(node * &head){
+    node*ptr=head;
+    while(ptr!=NULL){
+        cout<<ptr->data<<"->";
+        ptr=ptr->next;
+    }
+    cout<<"NULL"<<endl;
+}
+
+node* reversek(node * &head,int k){
+    node*prevptr=NULL;
+    node*currptr=head;
+    node*nextptr;
+    int count=0;
+    while(currptr!=NULL && count<k){
+        nextptr=currptr->next;
+        currptr->next=prevptr;
+        prevptr=currptr;
+        currptr=nextptr;
+        count++;
+    }
+    if(nextptr!=NULL){
+        head->next=reversek(nextptr,k);
+    }
+    return prevptr;
+}
+int main(){
+    node *head=NULL;
+    insertAtEnd(head,1);
+    insertAtEnd(head,2);
+    insertAtEnd(head,3);
+    insertAtEnd(head,4);
+    insertAtEnd(head,5);
+    insertAtEnd(head,6);
+    display(head);
+    int k=2;
+    node*newhead=reversek(head,k);
+    display(newhead);
+
+}
+----------------------------------------------------------------------------------------------------------
+// Leetcode version {N , N}
+class Solution {
+public:
+    ListNode* reversek(ListNode * head,int k,int length){
+        cout<<length<<endl;
+        if(length<k) return head;
+        int count=0;
+        ListNode* prev=NULL;
+        ListNode* cur=head;
+        ListNode* forw;
+        while(cur!=NULL && count<k){
+            forw=cur->next;
+            cur->next=prev;
+            prev=cur;
+            cur=forw;
+            count++;
+        }
+        head->next=reversek(forw,k,length-k);
+        return prev;
+    }
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        if(head==NULL || head->next==NULL || k==1) return head;
+        int count=0;
+        ListNode* ptr=head;
+        while(ptr!=NULL){
+            count++;
+            ptr=ptr->next;
+        }
+        return reversek(head,k,count);
+    }
+};
+------------------------------------------------------------------------------------------------------
+#2 without using extra space {N , 1}
+
+class Solution {
+public:
+    void reverse(ListNode * start,ListNode * end){
+        ListNode* prev=NULL;
+        ListNode* cur=start;
+        ListNode* forw;
+        while(prev!=end){
+            forw=cur->next;
+            cur->next=prev;
+            prev=cur;
+            cur=forw;
+        }
+    }
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        if(head==NULL || head->next==NULL || k==1) return head;
+        ListNode* dummy=new ListNode(-1);
+        ListNode* e=head;
+        dummy->next=head;
+        ListNode *s,*afterend,*beforestart=dummy;
+        int i=0;
+        while(e!=NULL){
+            i++;
+            if(i%k==0){
+                s=beforestart->next,afterend=e->next;
+                reverse(s,e);
+                beforestart->next=e;// connecting previous reversed ll to new reversed ll 
+                s->next=afterend;   // connecting current reversed ll to next unreversed ll
+                beforestart=s;
+                e=afterend; // e=s->next;
+            }
+            else{
+                e=e->next;
+            }
+        }
+        return dummy->next;
+    }
+};
+--------------------------------------------------------------------------------------------------------------

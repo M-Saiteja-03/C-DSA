@@ -1,0 +1,61 @@
+Given head, the head of a linked list, determine if the linked list has a cycle in it.
+
+There is a cycle in a linked list if there is some node in the list that can be reached again by 
+continuously following the next pointer. Internally, pos is used to denote the index of the node that tail's next pointer is connected to. Note that pos is not passed as a parameter.
+
+Return true if there is a cycle in the linked list. Otherwise, return false.
+
+Input: head = [3,2,0,-4], pos = 1
+Output: true
+Explanation: There is a cycle in the linked list, where the tail connects to the 1st node (0-indexed).
+
+Input: head = [3,2,0,-4], pos = 1
+Output: true
+Explanation: There is a cycle in the linked list, where the tail connects to the 1st node (0-indexed).
+
+Input: head = [1], pos = -1
+Output: false
+Explanation: There is no cycle in the linked list.
+
+The number of the nodes in the list is in the range [0, 104].
+-105 <= Node.val <= 105
+pos is -1 or a valid index in the linked-list.
+
+#1 using hashset {N,N}
+
+-----------------------------------------------------------------------------------------------------------------
+
+#2 slow and fast pointers {N , 1}
+
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        if(head==NULL){
+            return NULL;
+        }
+        ListNode* slow=head;
+        ListNode*fast=head;
+        cout<<fast->val<<endl;
+        while(fast->next!=NULL && fast->next->next!=NULL){
+            slow=slow->next;
+            fast=fast->next->next;
+            if(slow==fast) return true;
+        }
+        return false;
+    }
+};
+
+how this works?
+
+Logically: If we consider slow pointer at starting point of the cycle, fast pointer would be definitely 
+somewhere in the cycle. let the distance b/w s and f be d anticlockwise.
+                     -> in the next iteration distance will be d-1, then d-2......0 at some point.
+                     Hence they are bound to meet at a point in a cycle.
+
+Mathematically: wkt, f=2*s..........1.
+                   ->s = m + c1*n + k , m=tail distance, c1= no.of cycles covered by s , k =distance from starting point 
+                                        of cycle to the point they meet.
+                   ->f= m + c2*n + k   ,n= cycle length
+                   therefore we get, k=(c2-2*c1)*n - m i.e there exixts a point where s and f meet.
+                   Hence proved.
+------------------------------------------------------------------------------------------------------------------------ 

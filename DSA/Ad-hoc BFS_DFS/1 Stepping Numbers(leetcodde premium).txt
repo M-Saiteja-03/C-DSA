@@ -1,0 +1,142 @@
+
+Youtube exlanation:- https://www.youtube.com/watch?v=21T2IozZmY4 
+
+Given two integers ‘n’ and ‘m’, find all the stepping numbers in range [n, m].
+A number is called stepping number if all adjacent digits have an absolute difference of 1. 
+321 is a Stepping Number while 421 is not.
+
+Examples : 
+
+Input : n = 0, m = 21
+Output : 0 1 2 3 4 5 6 7 8 9 10 12 21
+
+Input : n = 10, m = 15
+Output : 10, 12
+
+------------------------------------------
+Method 1: Brute force Approach(mine)
+
+class Solution{
+    public:
+    vector<long long> absDifOne(long long N)
+    {
+        vector<long long> res;
+        for(int i=10;i<=N;i++){
+            string s=to_string(i);
+            int flag=1;
+            // cout<<s[1]-s[0]<<endl;
+            for(int j=1;j<s.size();j++){
+                if(abs(s[j]-s[j-1])!=1) flag=0;
+            }
+            if(flag) res.push_back(i);
+        }
+        return res;
+        
+    }
+};
+---------------------------------------------------
+#2 bruteforce
+
+// A C++ program to find all the Stepping Number in [n, m]
+#include<bits/stdc++.h>
+using namespace std;
+ 
+// This function checks if an integer n is a Stepping Number
+bool isStepNum(int n)
+{
+    // Initialize prevDigit with -1
+    int prevDigit = -1;
+ 
+    // Iterate through all digits of n and compare difference
+    // between value of previous and current digits
+    while (n)
+    {
+        // Get Current digit
+        int curDigit = n % 10;
+ 
+        // Single digit is consider as a
+        // Stepping Number
+        if (prevDigit == -1)
+            prevDigit = curDigit;
+        else
+        {
+            // Check if absolute difference between
+            // prev digit and current digit is 1
+            if (abs(prevDigit - curDigit) != 1)
+                 return false;
+        }
+        prevDigit = curDigit;
+        n /= 10;
+    }
+ 
+    return true;
+}
+ 
+// A brute force approach based function to find all
+// stepping numbers.
+void displaySteppingNumbers(int n, int m)
+{
+    // Iterate through all the numbers from [N,M]
+    // and check if it’s a stepping number.
+    for (int i=n; i<=m; i++)
+        if (isStepNum(i))
+            cout << i << " ";
+}
+ 
+// Driver program to test above function
+int main()
+{
+    int n = 0, m = 21;
+ 
+    // Display Stepping Numbers in
+    // the range [n, m]
+    displaySteppingNumbers(n, m);
+ 
+    return 0;
+}
+-----------------------------------------------------
+#3 using bfs {log(Num), num}
+
+class Solution{
+    public:
+    void bfs(vector<long long> &res, long long num, long long i){
+        queue<long long> q;
+        q.push(i);
+        while(!q.empty()){
+            int front=q.front();
+            q.pop();
+            
+            int lastdigit=front%10;
+            
+            if(front>0 && front<=num && front>=10){
+                res.push_back(front);
+            }
+            
+            if(front==0 or front>num) continue;
+            
+            if(lastdigit==0){
+                q.push(front*10+(lastdigit+1));
+            }
+            
+            else if(lastdigit==9){
+                q.push(front*10+(lastdigit-1));
+            }
+            
+            else{
+                q.push(front*10+(lastdigit-1));
+                q.push(front*10+(lastdigit+1));
+            }
+    
+        }
+    }
+    vector<long long> absDifOne(long long num)
+    {
+        vector<long long> res;
+        for(long long i=0;i<=9;i++){
+            bfs(res,num,i);
+        }
+        return res;
+    }
+
+};
+----------------------------------------------------------------------------------------------

@@ -1,0 +1,101 @@
+There are 3 cases:
+1.Not present + Not full
+2.Present 
+3.Not present + full
+
+#1 using hashmap {N*K , K} k->size of cache
+store and update the time stamps of elements in map by considering their indices as timestamps.
+ 1-o(1)
+ 2-o(1)
+ 3-o(k)
+---------------------------------------------------------------------------------------------------------
+#2 using single ll {N*K , K}
+
+1-o(k)
+2-o(k)
+3-o(k)
+
+here we are maintaing a head and a tail pointer by creating a dummy node and whenever the element comes,we are appending
+it to tail node and moving tail forward. Here the only time taking process is searching element in ll.
+----------------------------------------------------------------------------------------------------------------------- 
+#3 using dll and hashmap {1, 2*k}
+
+class LRUCache {
+public:
+    class Node{
+        public:
+            int k;
+            int val;
+            Node* prev;
+            Node* next;
+            Node(int _k,int _val){
+                k=_k;
+                val=_val;
+                prev=NULL;
+                next=NULL;
+            }
+    };
+    Node* head=new Node(-1,-1);
+    Node* tail;
+    unordered_map<int,Node*> m;
+    int cap;
+    LRUCache(int capacity) {
+        cap=capacity;
+        tail=head;
+    }
+    
+    int get(int key) {
+        if(m.find(key)!=m.end()){
+            Node* node=m[key];
+            int data=node->val;
+            if(node!=tail){
+                node->prev->next=node->next;
+                node->next->prev=node->prev;
+                tail->next=node;
+                node->prev=tail;
+                tail=node;
+            }
+            return data;
+        }
+        return -1;
+    }
+    
+    void put(int key, int value) {
+        //Present
+        if(m.find(key)!=m.end()){
+            Node* node=m[key];
+            node->val=value;
+            if(node!=tail){
+                node->prev->next=node->next;
+                node->next->prev=node->prev;
+                tail->next=node;
+                node->prev=tail;
+                tail=node;
+            }
+        }
+
+        else{
+            //NP+NF or NP+F
+            Node* newnode=new Node(key,value);
+            tail->next=newnode;
+            newnode->prev=tail;
+            tail=newnode;
+            m[key]=tail;
+            //NP+F
+            if(m.size()==cap+1){
+                cout<<cap<<endl;
+                m.erase(head->next->k);
+                head->next=head->next->next;
+                head->next->prev=head;
+            }
+        }
+    }
+};
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache* obj = new LRUCache(capacity);
+ * int param_1 = obj->get(key);
+ * obj->put(key,value);
+ */
+ ------------------------------------------------------------------------------------------------------------------

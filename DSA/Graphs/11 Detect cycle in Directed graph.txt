@@ -1,0 +1,114 @@
+since its a directed graph, the method used for undirected graph fails for the folowing test case
+[[1,2],[2,3],[2,4],[4,5],[5,3]]
+if the undirected grah method is used, the above case is considered as a cycle case.
+refer this link for more clarity: https://takeuforward.org/data-structure/detect-cycle-in-a-directed-graph-using-dfs-g-19/
+---------------------------------------------------------------------------------------------------------------
+so,we have to check in a particular path using "dfs" whether cycle exists in directed graph or not.
+#1 using vis array and path array
+{V+E , 2V}
+
+class Solution {
+private:
+	bool dfsCheck(int node, vector<int> adj[], int vis[], int pathVis[]) {
+		vis[node] = 1;
+		pathVis[node] = 1;
+
+		// traverse for adjacent nodes
+		for (auto it : adj[node]) {
+			// when the node is not visited
+			if (!vis[it]) {
+				if (dfsCheck(it, adj, vis, pathVis) == true)
+					return true;
+			}
+			// if the node has been previously visited
+			// but it has to be visited on the same path
+			else if (pathVis[it]) {
+				return true;
+			}
+		}
+
+		pathVis[node] = 0;
+		return false;
+	}
+public:
+	// Function to detect cycle in a directed graph.
+	bool isCyclic(int V, vector<int> adj[]) {
+		int vis[V] = {0};
+		int pathVis[V] = {0};
+
+		for (int i = 0; i < V; i++) {
+			if (!vis[i]) {
+				if (dfsCheck(i, adj, vis, pathVis) == true) return true;
+			}
+		}
+		return false;
+	}
+};
+
+
+--------------------------------------------------------------------------------------------------------------
+#2 using single vis array(grah coloring method){ (V+E), V} "dfs"
+
+class Solution {
+  public:
+  bool dfs(int s, vector<int> adj[], vector<int> &vis){
+      vis[s]=2;
+      for(int node:adj[s]){
+          if(!vis[node]){
+              if(dfs(node,adj,vis)) return true;
+          }
+          else if(vis[node]==2) return true;
+      }
+      vis[s]=1;
+      return false;
+  }
+    // Function to detect cycle in a directed graph.
+    bool isCyclic(int v, vector<int> adj[]) {
+        vector<int> vis(v,0);
+        for(int i=0;i<v;i++){
+            if(!vis[i]){
+                if(dfs(i,adj,vis)) return true;
+            }
+        }
+        return false;
+    }
+};
+---------------------------------------------------------------------------------------------------------------
+#3 using bfs {V+E , V} [Topo sort,KAHN's Algorithm]
+
+class Solution {
+  public:
+    // Function to detect cycle in a directed graph.
+    bool isCyclic(int v, vector<int> adj[]) {
+        vector<int> vis(v,0);
+        vector<int> indeg(v,0);
+        int cnt=0;
+		// calculating indegree of each nnode
+        for(int i=0;i<v;i++){
+            for(int node:adj[i]){
+                indeg[node]++;
+            }
+        }
+        queue<int> q;
+		// firstly,pushing all nodes into queue having indegree 0
+        for(int i=0;i<v;i++){
+            if(indeg[i]==0){
+                q.push(i);
+            }
+        }
+        while(!q.empty()){
+            int front=q.front();
+            q.pop();
+            cnt++;
+            for(int node:adj[front]){
+				// reducing count of adj nodes because the current(front) node is being removed
+                indeg[node]--;
+                if(indeg[node]==0) q.push(node);
+            }
+        }
+		// if cnt==v ,then topo sort is crct and there is no cycle in graph
+        if(cnt==v) return false;
+        return true;
+    }
+};
+------------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,82 @@
+You are given a weighted undirected graph having n vertices numbered from 1 to n and m edges describing there 
+are edges between a to b with some weight, find the shortest path between the vertex 1 and the vertex n and if 
+path does not exist then return a list consisting of only -1.
+
+Example:
+Input:
+n = 5, m= 6
+edges = [[1,2,2], [2,5,5], [2,3,4], [1,4,1],[4,3,3],[3,5,1]]
+Output:
+1 4 3 5
+Explaination:
+Shortest path from 1 to n is by the path 1 4 3 5
+
+Your Task:
+You don't need to read input or print anything. Your task is to complete the function shortestPath() which takes n vertex and m edges and vector of edges having weight as inputs and returns the shortest path between vertex 1 to n.
+
+Expected Time Complexity: O(m* log(n))
+Expected Space Complexity: O(n)
+
+Constraint:
+2 <= n <= 105
+0 <= m <= 105
+0<= a, b <= n
+1 <= w <= 105
+
+
+-------------------------------------------------------
+#1 (not submitted in gfg. should revise it again)
+class Solution {
+  public:
+    vector<int> shortestPath(int n, int m, vector<vector<int>>& edges) {
+         // Code here
+        map<int,vector<pair<int,int>>> adj;
+        // vector<pair<int,int>> adj[n+1];
+        for(auto it :edges){
+            int u=it[0];
+            int v=it[1];
+            int w=it[2];
+            adj[u].push_back({v,w});
+            adj[v].push_back({u,w});
+        }
+        // for(auto it:adj){
+        //     cout<<it.first<<":"<<it.second.first<<" "<<it.second.second;
+        // }
+        // cout<<endl;
+        vector<int> par(n+1);
+        vector<int> dist(n+1,INT_MAX);
+        dist[1]=0;
+        // par[1]=1; this gives wrong ans for test cases
+        for(int i=1;i<=n;i++) par[i]=i;
+        vector<int> res;
+        priority_queue<pair<int,int>,vector<pair<int,int>>, greater<pair<int,int>>> pq;
+        pq.push({0,1});
+        // cout<<endl;
+        while(!pq.empty()){
+            auto front=pq.top();
+            pq.pop();
+            int d=front.first;
+            int cur=front.second;
+            if(d<=dist[cur]){
+                for(auto nw:adj[cur]){
+                    int node=nw.first;
+                    int wt=nw.second;
+                    if(d+wt<dist[node]){
+                        dist[node]=d+wt;
+                        pq.push({dist[node],node});
+                        par[node]=cur;
+                    }
+                }
+            }
+        }
+        int node=n;
+        if(dist[node]==INT_MAX) return {-1};
+        while(par[node]!=node){
+            res.push_back(node);
+            node=par[node];
+        }
+        res.push_back(node);
+        reverse(res.begin(),res.end());
+        return res;
+    }
+};

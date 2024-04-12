@@ -1,0 +1,116 @@
+//Multi source bfs 
+
+Youtube :- https://www.youtube.com/watch?v=gu2MD0mpy9w&t=594s
+
+Given an m x n binary matrix mat, return the distance of the nearest 0 for each cell.
+
+The distance between two adjacent cells is 1.
+
+Example 1:
+
+Input: mat = [[0,0,0],[0,1,0],[0,0,0]]
+Output: [[0,0,0],[0,1,0],[0,0,0]]
+Example 2:
+
+
+Input: mat = [[0,0,0],[0,1,0],[1,1,1]]
+Output: [[0,0,0],[0,1,0],[1,2,1]]
+ 
+
+Constraints:
+
+m == mat.length
+n == mat[i].length
+1 <= m, n <= 104
+1 <= m * n <= 104
+mat[i][j] is either 0 or 1.
+There is at least one 0 in mat.
+-----------------------------------------------------------------------------------------------------
+#1 apply bfs for each and every node and find the nearest 0 { (M*N)*(M*N), M*N} {Bruteforce}
+
+class Solution {
+public:
+    int bfs(int i,int j,vector<vector<int>>& mat,int n,int m){
+        queue<pair<pair<int,int>,int>> q;
+        q.push({{i,j},0});
+        vector<int> delrow={-1, 0, 0, 1};
+        vector<int> delcol={0, -1, 1, 0};
+        while(!q.empty()){
+            int row=q.front().first.first;
+            int col=q.front().first.second;
+            int lvl=q.front().second;
+            q.pop();
+            for(int i=0;i<4;i++){
+                int newr=row+delrow[i];
+                int newc=col+delcol[i];
+                if(newr>=0 && newr<n && newc>=0 && newc<m){
+                    if(mat[newr][newc]==0){
+                        return lvl+1;
+                    }
+                    else{
+                        q.push({{newr,newc},lvl+1});
+                    }
+                }
+            }
+
+        }
+        return -1;
+    }
+    vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
+        int n=mat.size();
+        int m=mat[0].size();
+        vector<vector<int>> res(n,vector<int>(m,0));
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(mat[i][j]!=0){
+                    res[i][j]=bfs(i,j,mat,n,m);
+                }
+            }
+        }
+        return res;
+    }
+};
+--------------------------------------------------------------------------------------
+#2 apply multi source bfs at a time in a single matrix traversal {M*N , M*N}
+
+start the traversal from 0's itself and calculate the values for other cells starting from 0.
+
+class Solution {
+public:
+    void bfs(vector<vector<int>>& mat,int n,int m,queue<pair<pair<int,int>,int>> &q,vector<vector<int>> &res){
+        vector<int> delrow={-1, 0, 0, 1};
+        vector<int> delcol={0, -1, 1, 0};
+        while(!q.empty()){
+            int row=q.front().first.first;
+            int col=q.front().first.second;
+            int lvl=q.front().second;
+            q.pop();
+            for(int i=0;i<4;i++){
+                int newr=row+delrow[i];
+                int newc=col+delcol[i];
+                if(newr>=0 && newr<n && newc>=0 && newc<m && res[newr][newc]==-1){             
+                    q.push({{newr,newc},lvl+1});
+                    res[newr][newc]=lvl+1;
+                }
+            }
+        }
+    }
+    vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
+        int n=mat.size();
+        int m=mat[0].size();
+        queue<pair<pair<int,int>,int>> q;
+        vector<vector<int>> res(n,vector<int>(m,-1));
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(mat[i][j]==0){
+                    q.push({{i,j},0});
+                    res[i][j]=0;
+                }
+            }
+        }
+        bfs(mat,n,m,q,res);
+        return res;
+    }
+};
+------------------------------------------------------------------------------------------------------------
+

@@ -1,0 +1,54 @@
+Given the head of a singly linked list, return true if it is a 
+palindrome or false otherwise.
+
+Input: head = [1,2,2,1]
+Output: true
+
+Input: head = [1,2]
+Output: false
+
+Constraints:
+
+The number of nodes in the list is in the range [1, 105].
+0 <= Node.val <= 9
+
+Follow up: Could you do it in O(n) time and O(1) space?
+---------------------------------------------------------------------------------------
+#1 append the number in string or array from ll and check for palindrome {N, N}
+
+---------------------------------------------------------------------------------------
+#2 first reverse the second half of string ,check for palindrome and then retain its structure{N/2+N/2+N/2+N/2, 1}
+                                                                                            ->{N , 1}
+class Solution {
+public:
+    ListNode* reverse(ListNode* h){
+        ListNode* prev=NULL,*cur=h,*f;
+        while(cur!=NULL){
+            f=cur->next;
+            cur->next=prev;
+            prev=cur;
+            cur=f;
+        }
+        return prev;
+    }
+    bool isPalindrome(ListNode* head) {
+        ListNode* slow=head,*fast=head;
+        // get slow pointer to one element before middle node to reverse the next half
+        while(fast->next!=NULL && fast->next->next!=NULL){
+            slow=slow->next;
+            fast=fast->next->next;
+        }
+        //reverse the next half part of ll to check palindrome
+        slow->next=reverse(slow->next);
+        ListNode* start=head,*mid=slow->next;
+        while(mid!=NULL){
+            if(start->val!=mid->val) return false;
+            start=start->next;
+            mid=mid->next;
+        }
+        //again reverse it to maintain its structure intact
+        slow->next=reverse(slow->next);
+        return true;
+    }
+};                                                                                        
+------------------------------------------------------------------------------------------------------

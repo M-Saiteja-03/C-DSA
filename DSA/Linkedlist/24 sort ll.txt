@@ -1,0 +1,47 @@
+#1 Mergesort {NlogN , "1"}
+class Solution {
+public:
+    ListNode* findmid(ListNode* h){
+        ListNode* slow=h,*fast=h;
+        while(fast->next!=NULL && fast->next->next!=NULL){
+            slow=slow->next;
+            fast=fast->next->next;
+        }
+        return slow;
+    }
+
+    ListNode* merge(ListNode* h1, ListNode* h2){
+        if(h1==NULL) return h2;
+        if(h2==NULL) return h1;
+        ListNode* h=new ListNode(-1);
+        ListNode* t=h;
+        while(h1!=NULL && h2!=NULL){
+            if(h1->val<h2->val){
+                t->next=h1;
+                h1=h1->next;
+            }
+            else{
+                t->next=h2;
+                h2=h2->next;
+            }
+            t=t->next;
+        }
+        if(h1!=NULL) t->next=h1;
+        else t->next=h2;
+        return h->next;
+    }
+    
+    ListNode* sortList(ListNode* head) {
+        if(head==NULL or head->next==NULL){
+            return head;
+        } 
+        ListNode* mid=findmid(head);
+        ListNode* righthead=mid->next;
+        mid->next=NULL;
+        head=sortList(head);
+        righthead=sortList(righthead);
+        head=merge(head,righthead);
+        return head;
+    }
+};
+-----------------------------------------------------------------------------------------------------------

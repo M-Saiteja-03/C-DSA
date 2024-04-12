@@ -1,0 +1,95 @@
+// same as surrounded regions problem
+
+You are given an m x n binary matrix grid, where 0 represents a sea cell and 1 represents a land cell.
+
+A move consists of walking from one land cell to another adjacent (4-directionally) land cell or 
+walking off the boundary of the grid.
+
+Return the number of land cells in grid for which we cannot walk off the boundary of the grid in any number of moves.
+
+Example 1:
+
+
+Input: grid = [[0,0,0,0],[1,0,1,0],[0,1,1,0],[0,0,0,0]]
+Output: 3
+Explanation: There are three 1s that are enclosed by 0s, and one 1 that is not enclosed because its on the boundary.
+Example 2:
+
+
+Input: grid = [[0,1,1,0],[0,0,1,0],[0,0,1,0],[0,0,0,0]]
+Output: 0
+Explanation: All 1s are either on the boundary or can reach the boundary.
+ 
+
+Constraints:
+
+m == grid.length
+n == grid[i].length
+1 <= m, n <= 500
+grid[i][j] is either 0 or 1.
+-----------------------------------------------------------------------------------------
+#1 using bfs {N*M , N*M}
+
+class Solution {
+public:
+    void bfs(int row,int col, vector<vector<int>>& mat, vector<vector<bool>> &vis){
+        int n=mat.size();
+        int m=mat[0].size();
+        queue<pair<int,int>> q;
+        q.push({row,col});
+        vis[row][col]=true;
+        cout<<mat[row][col]<<endl;
+        vector<int> delrow={-1, 0, 0, 1};
+        vector<int> delcol={0, -1, 1, 0};
+        while(!q.empty()){
+            int r=q.front().first;
+            int c=q.front().second;
+            q.pop();
+            for(int i=0;i<4;i++){
+                int newr=r+delrow[i];
+                int newc=c+delcol[i];
+                if(newr>=0 && newr<n && newc>=0 && newc<m && mat[newr][newc]==1 && !vis[newr][newc]){
+                    vis[newr][newc]=true;
+                    q.push({newr,newc});
+                }
+            }
+        }
+    }
+    int numEnclaves(vector<vector<int>>& mat) {
+        int n=mat.size();
+        int m=mat[0].size();
+        int count=0;
+        vector<vector<bool>> vis(n,vector<bool>(m,false));
+        for(int i=0;i<m;i++){
+            //checking 1s in first row
+            if(!vis[0][i] && mat[0][i]==1){
+                bfs(0,i,mat,vis);
+            }
+
+            //checking 1s in last row
+            if(!vis[n-1][i] && mat[n-1][i]==1){
+                cout<<"hello"<<endl;
+                bfs(n-1,i,mat,vis);
+            }
+        }
+        for(int i=0;i<n;i++){
+            //checking 1s in first col
+            if(!vis[i][0] && mat[i][0]==1){
+                bfs(i,0,mat,vis);
+            }
+            //checking 1s in last col
+            if(!vis[i][m-1] && mat[i][m-1]==1){
+                bfs(i,m-1,mat,vis);
+            }
+        }
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(!vis[i][j] && mat[i][j]==1){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+};
+--------------------------------------------------------------------------------------------------------------
